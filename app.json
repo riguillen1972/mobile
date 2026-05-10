@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Study Buddy AI",
+    "slug": "study-buddy-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "studybuddy",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0e1a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.studybuddy.ai",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0e1a"
+      },
+      "package": "com.studybuddy.ai",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-splash-screen"
+    ]
+  }
+}
