@@ -55,24 +55,24 @@ export default function App() {
     SplashScreen.hideAsync();
   };
 
-  // Inject CSS to hide any elements that shouldn't appear in the app
-  // (e.g., "install app" banners, browser-specific elements)
+  // Minimal JS injection - just signal we're in the native app
   const injectedJavaScript = `
     (function() {
-      // Signal to the web app that it's running inside a native wrapper
       window.__NATIVE_APP__ = true;
-      
-      // Set viewport meta for proper scaling
-      const meta = document.querySelector('meta[name=viewport]');
-      if (meta) {
-        meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
-      }
-
-      // Force dark mode since our splash is dark
-      document.documentElement.classList.add('dark');
     })();
     true;
   `;
+
+  // Safety timeout: force-hide loading overlay after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+        SplashScreen.hideAsync();
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   if (hasError) {
     return (
@@ -112,19 +112,19 @@ export default function App() {
         javaScriptEnabled
         domStorageEnabled
         startInLoadingState={false}
-        allowsBackForwardNavigationGestures // iOS swipe back
+        allowsBackForwardNavigationGestures
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         mixedContentMode="compatibility"
         sharedCookiesEnabled
         thirdPartyCookiesEnabled
-        // Handle file uploads (for scan homework)
         allowFileAccess
         allowFileAccessFromFileURLs
-        // Pull to refresh
         pullToRefreshEnabled
-        // User agent to identify native app on the server
         applicationNameForUserAgent="StudyBuddyNativeApp/1.0"
+        scrollEnabled={true}
+        bounces={true}
+        keyboardDisplayRequiresUserAction={false}
       />
 
       {/* Loading overlay */}
