@@ -97,8 +97,8 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0e1a" translucent />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#0a0e1a" translucent={false} />
 
       <WebView
         ref={webViewRef}
@@ -116,7 +116,6 @@ export default function App() {
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         mixedContentMode="compatibility"
-        sharedCookiesEnabled
         thirdPartyCookiesEnabled
         allowFileAccess
         allowFileAccessFromFileURLs
@@ -137,7 +136,7 @@ export default function App() {
           </View>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
