@@ -15,8 +15,8 @@ import * as SplashScreen from 'expo-splash-screen';
 // Keep the splash screen visible while loading
 SplashScreen.preventAutoHideAsync();
 
-// ---- CHANGE THIS TO YOUR VERCEL URL ----
-const APP_URL = 'https://studyssbuddyssai.vercel.app';
+// Fall back to the hardcoded URL if the .env variable is not found
+const APP_URL = process.env.EXPO_PUBLIC_APP_URL || 'https://studyssbuddyssai.vercel.app';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
