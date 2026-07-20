@@ -1,0 +1,77 @@
+{
+  "identifier" : "E2B7A8C9",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "12345678",
+      "localizations" : [
+
+      ],
+      "name" : "StudyBuddy Subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "15.00",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "11111111",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "1M tokens, Focus Mode",
+              "displayName" : "Pro Tier",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.studybuddy.pro.monthly.v2",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Pro Monthly",
+          "subscriptionGroupID" : "12345678",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "30.00",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "22222222",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "All AI Study Tools, 2M tokens",
+              "displayName" : "Max Tier",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.studybuddy.max.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Max Monthly",
+          "subscriptionGroupID" : "12345678",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
