@@ -32,8 +32,6 @@ let package = Package(
   ],
   targets: [
     .target(
-  targets: [
-    .target(
       name: "Helpers",
       dependencies: [
         .product(name: "ConcurrencyExtras", package: "swift-concurrency-extras"),
