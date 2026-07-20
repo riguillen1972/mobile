@@ -8,7 +8,6 @@ enum AIModelError: Error {
     case tokenLimitReached
 }
 
-@Generable
 struct TeacherSuggestion: Codable {
     let suggestion: String
     let recommendedTitle: String
@@ -87,28 +86,43 @@ final class AIModelService: Sendable {
     }
     
     func generateFlashcards(topic: String, model: String = "") async throws -> [Flashcard] {
-        let prompt = "Generate exactly 5 flashcards about: \(topic)."
+        let prompt = "Generate exactly 5 flashcards about: \(topic). Return ONLY a JSON array of objects with 'question' and 'answer' string fields."
         let languageModel = try await getConfiguredModel(id: model)
-        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns structured data.")
-        let raw = try await session.generate([RawFlashcard].self, from: prompt)
+        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns raw JSON data without markdown wrappers.")
+        let response = try await session.respond(to: prompt)
+        
+        let jsonString = response.content.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "")
+        guard let data = jsonString.data(using: .utf8) else { throw AIModelError.invalidResponse }
+        let raw = try JSONDecoder().decode([RawFlashcard].self, from: data)
+        
         await trackTokens(prompt: prompt, response: "Generated 5 flashcards", model: model)
         return raw.map { Flashcard(question: $0.question, answer: $0.answer) }
     }
     
     func generateQuiz(topic: String, count: Int, model: String = "") async throws -> [QuizQuestion] {
-        let prompt = "Generate exactly \(count) multiple-choice questions about: \(topic)."
+        let prompt = "Generate exactly \(count) multiple-choice questions about: \(topic). Return ONLY a JSON array of objects with 'question', 'options' (array of strings), 'correctIndex' (integer), and 'explanation' fields."
         let languageModel = try await getConfiguredModel(id: model)
-        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns structured data.")
-        let raw = try await session.generate([RawQuizQuestion].self, from: prompt)
+        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns raw JSON data without markdown wrappers.")
+        let response = try await session.respond(to: prompt)
+        
+        let jsonString = response.content.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "")
+        guard let data = jsonString.data(using: .utf8) else { throw AIModelError.invalidResponse }
+        let raw = try JSONDecoder().decode([RawQuizQuestion].self, from: data)
+        
         await trackTokens(prompt: prompt, response: "Generated \(count) quiz questions", model: model)
         return raw.map { QuizQuestion(question: $0.question, options: $0.options, correctIndex: $0.correctIndex, explanation: $0.explanation) }
     }
     
     func generateBibleVerse(topic: String, model: String = "") async throws -> BibleVerse {
-        let prompt = "Find a comforting or relevant Bible verse about: \(topic)."
+        let prompt = "Find a comforting or relevant Bible verse about: \(topic). Return ONLY a JSON object with 'reference', 'text', and 'explanation' string fields."
         let languageModel = try await getConfiguredModel(id: model)
-        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns structured data.")
-        let response = try await session.generate(BibleVerse.self, from: prompt)
+        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns raw JSON data without markdown wrappers.")
+        let apiResponse = try await session.respond(to: prompt)
+        
+        let jsonString = apiResponse.content.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "")
+        guard let data = jsonString.data(using: .utf8) else { throw AIModelError.invalidResponse }
+        let response = try JSONDecoder().decode(BibleVerse.self, from: data)
+        
         await trackTokens(prompt: prompt, response: "Generated bible verse", model: model)
         return response
     }
@@ -130,15 +144,19 @@ final class AIModelService: Sendable {
     
     func generateTeacherSuggestion(progress: [APIClient.ClassProgressItem], model: String = "") async throws -> TeacherSuggestion {
         let languageModel = try await getConfiguredModel(id: model)
-        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns structured data. You analyze student progress to recommend the next assignment. Return a TeacherSuggestion object.")
+        let session = LanguageModelSession(model: languageModel, instructions: "You are an API that exclusively returns raw JSON data without markdown wrappers. You analyze student progress to recommend the next assignment. Return ONLY a JSON object with 'suggestion', 'recommendedTitle', 'recommendedSubject', 'recommendedType' (lesson/homework/quiz/rubric), and 'recommendedContent' string fields.")
         
         var prompt = "Here are the topics students are struggling with:\n"
         for item in progress {
             prompt += "Q: \(item.question) - Wrong \(item.wrong_count) times\n"
         }
-        prompt += "Provide a helpful suggestion for the teacher, and generate a recommended assignment (title, subject, type: lesson/homework/quiz/rubric, and raw content)."
+        prompt += "Provide a helpful suggestion for the teacher, and generate a recommended assignment."
         
-        let suggestion = try await session.generate(TeacherSuggestion.self, from: prompt)
+        let response = try await session.respond(to: prompt)
+        let jsonString = response.content.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "")
+        guard let data = jsonString.data(using: .utf8) else { throw AIModelError.invalidResponse }
+        let suggestion = try JSONDecoder().decode(TeacherSuggestion.self, from: data)
+        
         await trackTokens(prompt: prompt, response: suggestion.suggestion, model: model)
         return suggestion
     }

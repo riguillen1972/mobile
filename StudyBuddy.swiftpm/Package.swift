@@ -10,7 +10,7 @@ import AppleProductTypes
 let package = Package(
     name: "StudyBuddy",
     platforms: [
-        .iOS("17.0")
+        .iOS("27.0")
     ],
     products: [
         .iOSApplication(

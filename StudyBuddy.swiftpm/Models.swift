@@ -1,13 +1,11 @@
 import Foundation
 import FoundationModels
 
-@Generable
 struct RawFlashcard: Codable {
     let question: String
     let answer: String
 }
 
-@Generable
 struct RawQuizQuestion: Codable {
     let question: String
     let options: [String]
@@ -43,7 +41,6 @@ struct QuizQuestion: Identifiable, Codable {
     }
 }
 
-@Generable
 struct BibleVerse: Codable {
     let reference: String
     let text: String
