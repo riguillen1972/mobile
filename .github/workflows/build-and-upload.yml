@@ -21,6 +21,9 @@ jobs:
           -scheme StudyBuddy \
           -clonedSourcePackagesDirPath ../SPMCache
 
+    - name: Create empty .env
+      run: touch StudyBuddy.swiftpm/.env
+
     - name: Build Archive
       run: |
         cd StudyBuddy.swiftpm
